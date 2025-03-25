@@ -1,4 +1,3 @@
-/* styles.css */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,77 +6,68 @@
 
 body {
   font-family: sans-serif;
-  background: #f0f2f5;
+  background: #f3f3f3;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-/* Контейнер для всей карусели */
-.carousel-container {
-  position: relative;
-  width: 320px;
-  height: 550px;
-  perspective: 1000px; /* важный параметр для 3D-эффекта */
-  overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  background: #fff;
-}
-
-/* Внутренний блок, содержащий слайды */
 .carousel {
-  width: 100%;
-  height: 100%;
   position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.8s ease; /* анимация плавного перехода */
+  width: 600px;
+  overflow: hidden;
 }
 
-/* Каждый отдельный слайд */
-.slide {
-  position: absolute;
+.carousel-track-container {
+  overflow: hidden;
   width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  border-radius: 20px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+.carousel-track {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  color: #fff;
-  padding: 20px;
-  transform-origin: center center; /* Точка, вокруг которой будет вращение */
+  transition: transform 0.5s ease-in-out;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* Блок с текстом */
-.info {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 10px 15px;
-  border-radius: 10px;
+.carousel-slide {
+  min-width: 100%;
+  /* Можно настроить выравнивание изображений */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Навигационные кнопки */
-.navigation {
-  position: absolute;
-  bottom: 20px;
+.carousel-slide img {
+  display: block;
   width: 100%;
-  text-align: center;
+  height: auto;
 }
 
-.navigation button {
-  margin: 0 10px;
-  padding: 10px 15px;
-  cursor: pointer;
-  background: #2f80ed;
+/* Кнопки */
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  background: rgba(0,0,0,0.3);
   color: #fff;
   border: none;
-  border-radius: 5px;
-  font-size: 14px;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  z-index: 10;
 }
 
-.navigation button:hover {
-  background: #1f5fb8;
+.prev-button {
+  left: 10px;
+}
+
+.next-button {
+  right: 10px;
+}
+
+.carousel-button:hover {
+  background: rgba(0,0,0,0.5);
 }
