@@ -1,195 +1,38 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Карусель карточек</title>
-  <!-- Подключаем Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Подключаем Font Awesome для иконок -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-  <style>
-    /* Общие стили для страницы */
-    body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      max-width: 960px;
-    }
-
-    /* Стили для карточек */
-    .card {
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
-      background-color: #fff;
-    }
-    .card-img-top {
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-    }
-    .card-footer {
-      background-color: #fff;
-      border-top: 1px solid #f0f0f0;
-      padding: 10px 15px;
-      display: flex;
-      align-items: center;
-    }
-    .card-footer img {
-      border-radius: 50%;
-    }
-    .card-footer .user-info {
-      margin-left: 10px;
-    }
-    .card-footer .contact-icons a {
-      color: #007bff;
-      margin-left: auto;
-      margin-right: 10px;
-      text-decoration: none;
-      font-size: 1.2rem;
-    }
-
-    /* Стили для карусели */
-    #cardCarousel {
-      position: relative;
-    }
-    .carousel-inner {
-      display: flex;
-      overflow: visible; /* чтобы карточки за пределами контейнера были видны */
-    }
-    .carousel-item {
-      flex: 0 0 auto;
-      transition: transform 0.5s ease, opacity 0.5s ease;
-      margin: 0 10px;
-    }
-    /* Размер карточки, можно регулировать для нужного эффекта */
-    .carousel-item .card {
-      width: 300px;
-    }
-    /* Придаем эффект активной карточке */
-    .carousel-item.active .card {
-      transform: scale(1);
-      opacity: 1;
-    }
-    .carousel-item .card {
-      transform: scale(0.9);
-      opacity: 0.6;
-    }
-    /* Плавное увеличение карточки при наведении */
-    .carousel-item .card:hover {
-      transform: scale(1);
-      opacity: 1;
-    }
-    /* Убираем стандартные стрелки в мобильном виде */
-    @media (max-width: 576px) {
-      .carousel-control-prev,
-      .carousel-control-next {
-        display: none;
-      }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Travel Carousel</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="container my-4">
-    <div id="cardCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
-      <div class="carousel-inner">
-        <!-- Первая карточка -->
-        <div class="carousel-item active">
-          <div class="card mx-auto">
-            <img src="https://via.placeholder.com/300x180" class="card-img-top" alt="Изображение карточки">
-            <div class="card-body">
-              <h5 class="card-title">Заголовок карточки</h5>
-              <p class="card-text">Краткое описание карточки, которое поясняет её содержание.</p>
-            </div>
-            <div class="card-footer">
-              <img src="ily.JPG" alt="Avatar" width="40" height="40">
-              <div class="user-info">
-                <p class="mb-0">Имя пользователя</p>
-              </div>
-              <div class="contact-icons d-flex">
-                <a href="tel:+123456789" title="Позвонить"><i class="fas fa-phone"></i></a>
-                <a href="sms:+123456789" title="Написать сообщение"><i class="fas fa-envelope"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Вторая карточка -->
-        <div class="carousel-item">
-          <div class="card mx-auto">
-            <img src="https://via.placeholder.com/300x180" class="card-img-top" alt="Изображение карточки">
-            <div class="card-body">
-              <h5 class="card-title">Еще один заголовок</h5>
-              <p class="card-text">Дополнительное описание карточки.</p>
-            </div>
-            <div class="card-footer">
-              <img src="ily.JPG" alt="Avatar" width="40" height="40">
-              <div class="user-info">
-                <p class="mb-0">Другое имя</p>
-              </div>
-              <div class="contact-icons d-flex">
-                <a href="tel:+987654321" title="Позвонить"><i class="fas fa-phone"></i></a>
-                <a href="sms:+987654321" title="Написать сообщение"><i class="fas fa-envelope"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Третья карточка -->
-        <div class="carousel-item">
-          <div class="card mx-auto">
-            <img src="https://via.placeholder.com/300x180" class="card-img-top" alt="Изображение карточки">
-            <div class="card-body">
-              <h5 class="card-title">Третий заголовок</h5>
-              <p class="card-text">Описание для третьей карточки с дополнительной информацией.</p>
-            </div>
-            <div class="card-footer">
-              <img src="ily.JPG" alt="Avatar" width="40" height="40">
-              <div class="user-info">
-                <p class="mb-0">Имя третьего</p>
-              </div>
-              <div class="contact-icons d-flex">
-                <a href="tel:+1122334455" title="Позвонить"><i class="fas fa-phone"></i></a>
-                <a href="sms:+1122334455" title="Написать сообщение"><i class="fas fa-envelope"></i></a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Четвертая карточка -->
-        <div class="carousel-item">
-          <div class="card mx-auto">
-            <img src="ily.JPG" class="card-img-top" alt="Изображение карточки">
-            <div class="card-body">
-              <h5 class="card-title">Четвертый заголовок</h5>
-              <p class="card-text">Еще одно описание карточки для демонстрации карусели.</p>
-            </div>
-            <div class="card-footer">
-              <img src="ily.JPG" alt="Avatar" width="40" height="40">
-              <div class="user-info">
-                <p class="mb-0">Имя четвертого</p>
-              </div>
-              <div class="contact-icons d-flex">
-                <a href="tel:+5566778899" title="Позвонить"><i class="fas fa-phone"></i></a>
-                <a href="sms:+5566778899" title="Написать сообщение"><i class="fas fa-envelope"></i></a>
-              </div>
-            </div>
-          </div>
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="slide" style="background-image: url('italy.jpg')">
+        <div class="info">
+          <h2>Italian Town</h2>
+          <p>8 км рядом | ★ 4.5</p>
         </div>
       </div>
-      <!-- Управление каруселью -->
-      <a class="carousel-control-prev" href="#cardCarousel" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Предыдущий</span>
-      </a>
-      <a class="carousel-control-next" href="#cardCarousel" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Следующий</span>
-      </a>
+      <div class="slide" style="background-image: url('spain.jpg')">
+        <div class="info">
+          <h2>Spanish Beach</h2>
+          <p>10 км рядом | ★ 4.7</p>
+        </div>
+      </div>
+      <div class="slide" style="background-image: url('greece.jpg')">
+        <div class="info">
+          <h2>Greek Island</h2>
+          <p>2 км рядом | ★ 4.9</p>
+        </div>
+      </div>
+    </div>
+    <div class="navigation">
+      <button id="prevBtn">Prev</button>
+      <button id="nextBtn">Next</button>
     </div>
   </div>
-
-  <!-- Подключаем jQuery, Popper.js и Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <script src="script.js"></script>
 </body>
 </html>
