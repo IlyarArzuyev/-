@@ -1,30 +1,48 @@
-// script.js
-const slides = document.querySelectorAll('.slide');
-let current = 0;
+// Находим элементы
+const track = document.querySelector('.carousel-track');
+const slides = Array.from(track.children);
+const prevButton = document.querySelector('.prev-button');
+const nextButton = document.querySelector('.next-button');
 
-function updateSlides() {
-  slides.forEach((slide, index) => {
-    // Смещение от текущего слайда
-    const offset = index - current;
+// Получаем ширину слайда (исходя из min-width: 100% для li)
+const slideWidth = slides[0].getBoundingClientRect().width;
 
-    // Чем дальше слайд от текущего, тем сильнее его смещение и поворот
-    const translateX = offset * 40;    // 40% смещения между карточками
-    const rotateY = offset * 15;      // 15 градусов поворота на каждую позицию
+// Расставляем слайды в линию (горизонтально)
+slides.forEach((slide, index) => {
+  slide.style.left = slideWidth * index + 'px';
+});
 
-    slide.style.transform = `translateX(${translateX}%) rotateY(${rotateY}deg)`;
-  });
+// Текущий индекс слайда
+let currentSlide = 0;
+
+// Функция для переключения слайдов
+function moveToSlide(track, current, target) {
+  track.style.transform = `translateX(-${target.style.left})`;
+  currentSlide = slides.indexOf(target);
 }
 
-// События на кнопках
-document.getElementById('prevBtn').addEventListener('click', () => {
-  current = (current - 1 + slides.length) % slides.length;
-  updateSlides();
+// Кнопка «Назад»
+prevButton.addEventListener('click', () => {
+  // Проверяем, чтобы не выйти за границы
+  if (currentSlide > 0) {
+    const prevSlide = slides[currentSlide - 1];
+    moveToSlide(track, slides[currentSlide], prevSlide);
+  } else {
+    // Перейти на последний слайд (при желании)
+    const lastSlide = slides[slides.length - 1];
+    moveToSlide(track, slides[currentSlide], lastSlide);
+  }
 });
 
-document.getElementById('nextBtn').addEventListener('click', () => {
-  current = (current + 1) % slides.length;
-  updateSlides();
+// Кнопка «Вперёд»
+nextButton.addEventListener('click', () => {
+  // Проверяем, чтобы не выйти за границы
+  if (currentSlide < slides.length - 1) {
+    const nextSlide = slides[currentSlide + 1];
+    moveToSlide(track, slides[currentSlide], nextSlide);
+  } else {
+    // Перейти на первый слайд (при желании)
+    const firstSlide = slides[0];
+    moveToSlide(track, slides[currentSlide], firstSlide);
+  }
 });
-
-// Инициализируем расположение при загрузке
-updateSlides();
