@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Карусель Картинок</title>
+  <title>Циклическая Карусель</title>
   <style>
-    /* Сброс стилей для мобильных устройств */
     * {
       margin: 0;
       padding: 0;
@@ -36,34 +35,71 @@
       background-position: center;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       transition: transform 0.3s ease, opacity 0.3s ease;
+      touch-action: pan-y;
     }
-    /* Эффект «колоды» — разные слои */
-    .card:nth-child(1) {
+    /* Начальные стили для эффекта «колоды» */
+    .card.top {
       z-index: 3;
+      transform: translateX(0) scale(1) translateY(0);
     }
-    .card:nth-child(2) {
+    .card.middle {
       z-index: 2;
       transform: scale(0.95) translateY(10px);
     }
-    .card:nth-child(3) {
+    .card.bottom {
       z-index: 1;
       transform: scale(0.90) translateY(20px);
     }
   </style>
 </head>
 <body>
-  <div class="carousel">
-    <div class="card" style="background-image: url('https://picsum.photos/400/600?random=1');"></div>
-    <div class="card" style="background-image: url('https://picsum.photos/400/600?random=2');"></div>
-    <div class="card" style="background-image: url('https://picsum.photos/400/600?random=3');"></div>
-  </div>
+  <div class="carousel"></div>
 
   <script>
+    // Массив изображений (можно добавить больше)
+    const images = [
+      'https://picsum.photos/400/600?random=1',
+      'https://picsum.photos/400/600?random=2',
+      'https://picsum.photos/400/600?random=3',
+      'https://picsum.photos/400/600?random=4',
+      'https://picsum.photos/400/600?random=5'
+    ];
+
+    let currentIndex = 0; // индекс для отображаемой в данный момент карточки
     const carousel = document.querySelector('.carousel');
+    const threshold = 100;
     let startX = 0;
     let isDragging = false;
-    
-    // Функция для установки обработчиков свайпов на передней карточке
+
+    // Создаём 3 карточки
+    const cardElements = [];
+    for (let i = 0; i < 3; i++) {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      carousel.appendChild(card);
+      cardElements.push(card);
+    }
+
+    // Обновление отображения карточек согласно currentIndex
+    function renderDeck() {
+      // Карточки: верхняя – текущая, middle – следующая, bottom – через одну
+      const topImg = images[currentIndex % images.length];
+      const middleImg = images[(currentIndex + 1) % images.length];
+      const bottomImg = images[(currentIndex + 2) % images.length];
+      cardElements[0].style.backgroundImage = `url('${topImg}')`;
+      cardElements[1].style.backgroundImage = `url('${middleImg}')`;
+      cardElements[2].style.backgroundImage = `url('${bottomImg}')`;
+
+      // Назначаем классы для стилизации
+      cardElements[0].className = 'card top';
+      cardElements[1].className = 'card middle';
+      cardElements[2].className = 'card bottom';
+
+      // Назначаем обработчики свайпов только для верхней карточки
+      attachSwipe(cardElements[0]);
+    }
+
+    // Функция назначения обработчиков для свайпа (на верхнюю карточку)
     function attachSwipe(card) {
       card.addEventListener('touchstart', onTouchStart);
       card.addEventListener('touchmove', onTouchMove);
@@ -73,61 +109,60 @@
     function onTouchStart(e) {
       startX = e.touches[0].clientX;
       isDragging = true;
-      // Сброс плавного перехода для мгновенного отклика
       this.style.transition = 'none';
     }
 
     function onTouchMove(e) {
       if (!isDragging) return;
       const moveX = e.touches[0].clientX - startX;
-      // Лёгкий поворот карточки для эффекта
       this.style.transform = `translateX(${moveX}px) rotate(${moveX / 10}deg)`;
     }
 
     function onTouchEnd(e) {
       isDragging = false;
       const moveX = e.changedTouches[0].clientX - startX;
-      // Если свайп достаточно длинный – анимируем уход карточки
-      if (Math.abs(moveX) > 100) {
-        this.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-        this.style.transform = `translateX(${moveX > 0 ? 1000 : -1000}px) rotate(${moveX / 2}deg)`;
-        this.style.opacity = 0;
-        // После завершения анимации удаляем карточку и перестраиваем оставшиеся
-        setTimeout(() => {
-          carousel.removeChild(this);
-          updateCards();
-        }, 300);
+      // Свайп влево → следующий элемент, вправо → предыдущий
+      if (moveX < -threshold) {
+        swipeNext(this, moveX);
+      } else if (moveX > threshold) {
+        swipePrev(this, moveX);
       } else {
-        // Возвращаем карточку в исходное положение
+        // Возврат в исходное положение
         this.style.transition = 'transform 0.3s ease';
         this.style.transform = 'translateX(0) rotate(0deg)';
       }
     }
 
-    // Обновление стилей для оставшихся карточек после удаления передней
-    function updateCards() {
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card, index) => {
-        card.style.transition = 'transform 0.3s ease';
-        if (index === 0) {
-          card.style.transform = 'translateX(0) rotate(0deg)';
-          card.style.zIndex = 3;
-          attachSwipe(card); // Новая передняя карточка получает обработчики свайпов
-        } else if (index === 1) {
-          card.style.transform = 'scale(0.95) translateY(10px)';
-          card.style.zIndex = 2;
-        } else {
-          card.style.transform = 'scale(0.90) translateY(20px)';
-          card.style.zIndex = 1;
-        }
-      });
+    // Переход к следующей карточке
+    function swipeNext(card) {
+      card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+      card.style.transform = 'translateX(-1000px) rotate(-30deg)';
+      card.style.opacity = 0;
+      setTimeout(() => {
+        // Увеличиваем индекс и рендерим колоду заново
+        currentIndex = (currentIndex + 1) % images.length;
+        // Переставляем карточки: верхняя перемещается в конец массива
+        cardElements.push(cardElements.shift());
+        renderDeck();
+      }, 300);
     }
 
-    // Назначаем обработчики первой карточке
-    const firstCard = document.querySelector('.card:nth-child(1)');
-    if (firstCard) {
-      attachSwipe(firstCard);
+    // Переход к предыдущей карточке
+    function swipePrev(card) {
+      card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+      card.style.transform = 'translateX(1000px) rotate(30deg)';
+      card.style.opacity = 0;
+      setTimeout(() => {
+        // Переходим к предыдущему изображению
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        // Переставляем карточки: последний элемент переносим в начало массива
+        cardElements.unshift(cardElements.pop());
+        renderDeck();
+      }, 300);
     }
+
+    // Инициализация колоды
+    renderDeck();
   </script>
 </body>
 </html>
