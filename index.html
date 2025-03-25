@@ -2,42 +2,132 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Пример карусели</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карусель Картинок</title>
+  <style>
+    /* Сброс стилей для мобильных устройств */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .carousel {
+      position: relative;
+      width: 90%;
+      max-width: 400px;
+      height: 600px;
+      perspective: 1000px;
+      overflow: hidden;
+    }
+    .card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    /* Эффект «колоды» — разные слои */
+    .card:nth-child(1) {
+      z-index: 3;
+    }
+    .card:nth-child(2) {
+      z-index: 2;
+      transform: scale(0.95) translateY(10px);
+    }
+    .card:nth-child(3) {
+      z-index: 1;
+      transform: scale(0.90) translateY(20px);
+    }
+  </style>
 </head>
 <body>
-
-<div class="carousel">
-  <!-- Кнопка назад -->
-  <button class="carousel-button prev-button">&#10094;</button>
-  
-  <div class="carousel-track-container">
-    <ul class="carousel-track">
-      <!-- Слайд 1 -->
-      <li class="carousel-slide">
-        <a href="https://example.com/ссылка1">
-          <img src="ily.JPG" alt="Слайд 1">
-        </a>
-      </li>
-      <!-- Слайд 2 -->
-      <li class="carousel-slide">
-        <a href="https://example.com/ссылка2">
-          <img src="ily.JPG" alt="Слайд 2">
-        </a>
-      </li>
-      <!-- Слайд 3 -->
-      <li class="carousel-slide">
-        <a href="https://example.com/ссылка3">
-          <img src="ily.JPG" alt="Слайд 3">
-        </a>
-      </li>
-    </ul>
+  <div class="carousel">
+    <div class="card" style="background-image: url('https://picsum.photos/400/600?random=1');"></div>
+    <div class="card" style="background-image: url('https://picsum.photos/400/600?random=2');"></div>
+    <div class="card" style="background-image: url('https://picsum.photos/400/600?random=3');"></div>
   </div>
-  
-  <!-- Кнопка вперёд -->
-  <button class="carousel-button next-button">&#10095;</button>
-</div>
 
-<script src="script.js"></script>
+  <script>
+    const carousel = document.querySelector('.carousel');
+    let startX = 0;
+    let isDragging = false;
+    
+    // Функция для установки обработчиков свайпов на передней карточке
+    function attachSwipe(card) {
+      card.addEventListener('touchstart', onTouchStart);
+      card.addEventListener('touchmove', onTouchMove);
+      card.addEventListener('touchend', onTouchEnd);
+    }
+
+    function onTouchStart(e) {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+      // Сброс плавного перехода для мгновенного отклика
+      this.style.transition = 'none';
+    }
+
+    function onTouchMove(e) {
+      if (!isDragging) return;
+      const moveX = e.touches[0].clientX - startX;
+      // Лёгкий поворот карточки для эффекта
+      this.style.transform = `translateX(${moveX}px) rotate(${moveX / 10}deg)`;
+    }
+
+    function onTouchEnd(e) {
+      isDragging = false;
+      const moveX = e.changedTouches[0].clientX - startX;
+      // Если свайп достаточно длинный – анимируем уход карточки
+      if (Math.abs(moveX) > 100) {
+        this.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        this.style.transform = `translateX(${moveX > 0 ? 1000 : -1000}px) rotate(${moveX / 2}deg)`;
+        this.style.opacity = 0;
+        // После завершения анимации удаляем карточку и перестраиваем оставшиеся
+        setTimeout(() => {
+          carousel.removeChild(this);
+          updateCards();
+        }, 300);
+      } else {
+        // Возвращаем карточку в исходное положение
+        this.style.transition = 'transform 0.3s ease';
+        this.style.transform = 'translateX(0) rotate(0deg)';
+      }
+    }
+
+    // Обновление стилей для оставшихся карточек после удаления передней
+    function updateCards() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.style.transition = 'transform 0.3s ease';
+        if (index === 0) {
+          card.style.transform = 'translateX(0) rotate(0deg)';
+          card.style.zIndex = 3;
+          attachSwipe(card); // Новая передняя карточка получает обработчики свайпов
+        } else if (index === 1) {
+          card.style.transform = 'scale(0.95) translateY(10px)';
+          card.style.zIndex = 2;
+        } else {
+          card.style.transform = 'scale(0.90) translateY(20px)';
+          card.style.zIndex = 1;
+        }
+      });
+    }
+
+    // Назначаем обработчики первой карточке
+    const firstCard = document.querySelector('.card:nth-child(1)');
+    if (firstCard) {
+      attachSwipe(firstCard);
+    }
+  </script>
 </body>
 </html>
