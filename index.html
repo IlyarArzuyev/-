@@ -2,37 +2,42 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Travel Carousel</title>
+  <title>Пример карусели</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="carousel-container">
-    <div class="carousel">
-      <div class="slide" style="background-image: url('italy.jpg')">
-        <div class="info">
-          <h2>Italian Town</h2>
-          <p>8 км рядом | ★ 4.5</p>
-        </div>
-      </div>
-      <div class="slide" style="background-image: url('spain.jpg')">
-        <div class="info">
-          <h2>Spanish Beach</h2>
-          <p>10 км рядом | ★ 4.7</p>
-        </div>
-      </div>
-      <div class="slide" style="background-image: url('greece.jpg')">
-        <div class="info">
-          <h2>Greek Island</h2>
-          <p>2 км рядом | ★ 4.9</p>
-        </div>
-      </div>
-    </div>
-    <div class="navigation">
-      <button id="prevBtn">Prev</button>
-      <button id="nextBtn">Next</button>
-    </div>
+
+<div class="carousel">
+  <!-- Кнопка назад -->
+  <button class="carousel-button prev-button">&#10094;</button>
+  
+  <div class="carousel-track-container">
+    <ul class="carousel-track">
+      <!-- Слайд 1 -->
+      <li class="carousel-slide">
+        <a href="https://example.com/ссылка1">
+          <img src="https://via.placeholder.com/600x300/FF0000/FFFFFF?text=Slide+1" alt="Слайд 1">
+        </a>
+      </li>
+      <!-- Слайд 2 -->
+      <li class="carousel-slide">
+        <a href="https://example.com/ссылка2">
+          <img src="https://via.placeholder.com/600x300/00FF00/FFFFFF?text=Slide+2" alt="Слайд 2">
+        </a>
+      </li>
+      <!-- Слайд 3 -->
+      <li class="carousel-slide">
+        <a href="https://example.com/ссылка3">
+          <img src="https://via.placeholder.com/600x300/0000FF/FFFFFF?text=Slide+3" alt="Слайд 3">
+        </a>
+      </li>
+    </ul>
   </div>
   
-  <script src="script.js"></script>
+  <!-- Кнопка вперёд -->
+  <button class="carousel-button next-button">&#10095;</button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
