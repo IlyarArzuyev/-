@@ -1,17 +1,534 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Travel Carousel</title>
-  <link rel="stylesheet" href="app.css" />
+  <meta charset="UTF-8">
+  <title>Mobile ExpertCredit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #1A237E;
+      --accent-color: #4CAF50;
+      --background: linear-gradient(180deg, #F5F5F6 0%, #E8EAF6 100%);
+      --shadow: 0 8px 24px rgba(0,0,0,0.08);
+      --header-height: 80px;
+      --footer-height: 60px;
+    }
+    
+    /* Запрет выделения текста */
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      background: var(--background);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+    
+    /* Фиксированная шапка */
+    .header {
+      background: var(--primary-color);
+      color: white;
+      padding: 0px;
+      box-shadow: var(--shadow);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      z-index: 1000;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: -10%;
+      width: 120%;
+      height: 40px;
+      background: white;
+      border-radius: 24px;
+      transform: rotate(-2deg);
+    }
+    
+    /* Фиксированный нижний бар (футер) */
+    footer {
+      background: var(--primary-color);
+      color: white;
+      text-align: center;
+      padding: -20px;
+      font-size: 14px;
+      height: var(--footer-height);
+      line-height: var(--footer-height);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    
+    /* Контейнер основного контента с прокруткой */
+    main {
+      margin-top: var(--header-height);
+      margin-bottom: var(--footer-height);
+      height: calc(100vh - var(--header-height) - var(--footer-height));
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Карта с градиентом */
+    .account-card {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #303F9F 100%);
+      border-radius: 24px;
+      padding: 24px;
+      margin: 24px 16px;
+      color: white;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+    
+    .account-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    /* Стили для быстрых действий */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding-right: 20px;
+      margin-top: 32px;
+      align: center;
+      padding-top: 6px;
+      padding-bottom: 8px;
+      padding-left: 20px;
+    }
+    
+    .action-button {
+      text-align: center;
+      padding: 16px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: 1px solid rgba(0,0,0,0.05);
+      width: 100px;
+      height: 100px;
+    }
+    
+    .action-button:hover {
+      background: white;
+      box-shadow: var(--shadow);
+    }
+    
+    /* Иконки кнопок 15x15 пикселей */
+    .action-icon {
+      font-size: 25px;
+      width: 25px;
+      height: 25px;
+      display: inline-block;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+      transition: transform 0.3s ease;
+      line-height: 15px;
+    }
+
+    .action-button div {
+      font-size: 12px;
+    }
+
+    /* Секция офер-карт */
+    .offer-slider {
+      display: flex;
+      overflow-x: auto;
+      padding: 16px;
+      gap: 16px;
+      scroll-snap-type: x mandatory;
+    }
+    
+    .offer-card {
+      flex: 0 0 80%;
+      border-radius: 24px;
+      scroll-snap-align: start;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      height: 200px;
+      width: 700px;
+      user-select: none; /* отключает выделение текста */
+    }
+ 
+    a {
+      -webkit-tap-highlight-color: transparent; /* убирает подсветку на мобильных */
+      outline: none; /* убирает рамку при фокусе */
+      text-decoration: none; /* убирает подчеркивание */
+    }
+
+    /* Эффект при нажатии */
+    .offer-card:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Секция транзакций - кнопки */
+    .transactions {
+      margin: 24px 16px 5px 16px; /* снизу отступ ~5px */
+      background: var(--background);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    .transactions-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 500;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      height: 20px;
+    }
+    
+    .transaction-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px; /* можно задать нужную высоту */
+      text-decoration: none;
+      color: inherit;
+      border-radius: 8px; /* скругление углов */
+    }
+    
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+    
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animated {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    /* Кастомный скроллбар */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
+    
+    /* Стили для аватарки и блока с данными пользователя */
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    
+    #user-header span {
+      font-size: 10px;
+      font-weight: 400;
+      vertical-align: middle;
+    }
+    .quick-actions a {
+      text-decoration: none;
+      display: inline-block;
+      color: inherit;
+    }
+
+    .quick-actions a:focus {
+      outline: none;
+    }
+    
+    .transactions-header img {
+      width: 25px;
+      height: 25px;
+    }
+    
+    /* Правка для мобильного вида на любых устройствах */
+    @media (min-width: 500px) {
+      html, body {
+        max-width: 700px;
+        max-height: 800px;
+        margin: auto;
+        overflow: hidden;
+      }
+    }
+  </style>
+  <!-- Подключение стилей Swiper -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <!-- Travel Carousel CSS -->
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Comfortaa", cursive;
+    }
+
+    /* Для раздела Travel Carousel используем свой класс, чтобы не конфликтовать с основными стилями */
+    section.carousel-section {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* Фон удалён */
+      min-height: 100vh;
+      overflow: hidden;
+      margin-bottom: 5px; /* отступ снизу ~5px */
+      margin-top: -195px; /* отступ снизу ~5px */
+    }
+
+    .carousel-section .content {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      backdrop-filter: blur(30px);
+      border-radius: 20px;
+      width: min(900px, 100%);
+      box-shadow: 0 0.5px 0 1px rgba(255, 255, 255, 0.23) inset,
+        0 1px 0 0 rgba(255, 255, 255, 0.66) inset, 0 4px 16px rgba(0, 0, 0, 0.12);
+      z-index: 10;
+    }
+
+    .carousel-section .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      max-width: 450px;
+      padding: 0 35px;
+      text-align: justify;
+    }
+
+    .carousel-section .info p {
+      color: #fff;
+      font-weight: 500;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .carousel-section .movie-night {
+      background: linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%);
+    }
+
+    .carousel-section .btn {
+      display: block;
+      padding: 10px 40px;
+      margin: 10px auto;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 4px;
+      outline: none;
+      text-decoration: none;
+      color: #784ba0;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    .carousel-section .btn:hover {
+      animation: gelatine 0.5s 1;
+    }
+
+    @keyframes gelatine {
+      0%,
+      100% {
+        transform: scale(1, 1);
+      }
+      25% {
+        transform: scale(0.9, 1.1);
+      }
+      50% {
+        transform: scale(1.1, 0.9);
+      }
+      75% {
+        transform: scale(0.95, 1.05);
+      }
+    }
+
+    /* SWIPER */
+
+    .carousel-section .swiper {
+      width: 250px;
+      height: 450px;
+      padding: 50px 0;
+    }
+
+    .carousel-section .swiper-slide {
+      position: relative;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      user-select: none;
+    }
+
+    .carousel-section .swiper-slide img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-section .img-position {
+      object-position: 50% 0%;
+    }
+
+    .carousel-section .overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, #0f2027, transparent, transparent);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .carousel-section .overlay span {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: #fff;
+      padding: 7px 18px;
+      margin: 10px;
+      border-radius: 20px;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.095);
+      box-shadow: inset 2px -2px 20px rgba(214, 214, 214, 0.2),
+        inset -3px 3px 3px rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(74px);
+    }
+
+    .carousel-section .overlay h2 {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      color: #fff;
+      font-weight: 400;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      margin: 0 0 20px 20px;
+    }
+  </style>
 </head>
-      <body>
-<section>
+<body>
+  <header class="header" aria-label="Панель пользователя">
+    <div id="user-header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Добро пожаловать!</div>
+  </header>
+
+  <main>
+    <section class="account-card animated" style="animation-delay: 0.2s;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 12px; opacity: 0.8;">Ипотечная компания</div>
+          <div style="font-size: 32px; font-weight: 700; margin: 8px 0;">Expert Credit</div>
+          <div style="font-size: 14px;">на рынке с 2022г.</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 12px;">
+          <span class="material-icons" aria-label="Карта">real_estate_agent</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick-actions">
+      <a href="deepseakCalc.html" rel="noopener noreferrer">
+        <div class="action-button animated" style="animation-delay: 0.4s;" tabindex="0" aria-label="Переводы">
+          <span class="material-icons action-icon">auto_stories</span>
+          <div>Гайд</div>
+        </div>
+      </a>
+      <a href="https://pay.kaspi.kz/pay/klcx3wrc" target="_blank" rel="noopener noreferrer">
+        <div class="action-button animated" style="animation-delay: 0.5s;" tabindex="0" aria-label="Платежи">
+          <span class="material-icons action-icon">payments</span>
+          <div>Оплата</div>
+        </div>
+      </a>
+      <a href="https://2gis.kz/almaty/inside/9430047375024031/firm/70000001065238061/tab/reviews?m=76.902419%2C43.237714%2F16" target="_blank" rel="noopener noreferrer">
+        <div class="action-button animated" style="animation-delay: 0.6s;" tabindex="0" aria-label="QR-код">
+          <span class="material-icons action-icon">rate_review</span>
+          <div>Отзыв</div>
+        </div>
+      </a>
+      <a href="https://t.me/managers_assessmentBOT" rel="noopener noreferrer">
+        <div class="action-button animated" style="animation-delay: 0.7s;" tabindex="0" aria-label="Вклады">
+          <span class="material-icons action-icon">thumbs_up_down</span>
+          <div>Оценить</div>
+        </div>
+      </a>
+    </section>
+
+    <section class="offer-slider" style="margin-left: 16px;">
+      <div class="offer-card animated" style="animation-delay: 0.8s; background-image: url('IMG_8973.jpeg'); width: 200px; height: 200px; background-size: cover; background-position: center;"></div>
+      <a href="calc.html">
+        <div class="offer-card animated" style="animation-delay: 0.9s; background-image: url('calc.png'); width: 285px; height: 200px; background-size: cover; background-position: center;"></div>
+      </a>
+      <a href="https://2gis.kz/almaty/firm/70000001065238061?m=76.902439%2C43.23761%2F16" target="_blank">
+        <div class="offer-card animated" style="animation-delay: 0.9s; background-image: url('2Gis.png'); width: 285px; height: 200px; background-size: cover; background-position: center;"></div>
+      </a>
+      <a href="openAI.html">
+        <div class="offer-card animated" style="animation-delay: 0.9s; background-image: url('AI1.png'); width: 285px; height: 200px; background-size: cover; background-position: center;"></div>
+      </a>
+    </section>
+
+    <section class="transactions animated" style="animation-delay: 1s;">
+      <div class="transactions-header">
+        Мы в соц. сетях:&nbsp;&nbsp;&nbsp; 
+        <a href="https://www.instagram.com/kanat_expert/" target="_blank" class="transaction-item">
+          &nbsp;&nbsp;
+          <img src="ini.png" alt="Instagram">&nbsp;&nbsp;&nbsp;&nbsp;     
+        </a>
+        <a href="https://www.youtube.com/@kanat_expert" target="_blank" class="transaction-item">
+          &nbsp;&nbsp;
+          <img src="yu.png" alt="YouTube">&nbsp;&nbsp;&nbsp;&nbsp; 
+        </a>
+        <a href="https://wa.me/77753181260" target="_blank" class="transaction-item">
+          &nbsp;&nbsp;        
+          <img src="ww.png" alt="What's app">
+        </a>
+      </div>
+    </section>
+
+    <!-- Добавленный раздел Travel Carousel (интегрированные HTML, CSS, JS коды) -->
+    <section class="carousel-section">
       <div class="content">
-        <div class="info">
-          <p>
-            Join us for a fantastic
+        <div class="info">Специалисты <br>"Expert Credit"<br><br>
+<p style="color: black;">
+	            Join us for a fantastic
             <span class="movie-night">movie night</span> filled with popcorn,
             laughter, and great company! Whether you're a fan of thrilling
             action, heartwarming dramas, or side-splitting comedies, we've got a
@@ -23,91 +540,63 @@
         <div class="swiper">
           <div class="swiper-wrapper">
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/b6f5eb64-887c-43b1-aaba-d52a4c59a379"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/b6f5eb64-887c-43b1-aaba-d52a4c59a379" alt="" />
               <div class="overlay">
                 <span>8.5</span>
                 <h2>The Queen's Gambit</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                class="img-position"
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/e906353b-fde0-4518-9a03-16545c1161bd"
-                alt="" />
+              <img class="img-position" src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/e906353b-fde0-4518-9a03-16545c1161bd" alt="" />
               <div class="overlay">
                 <span>9.5</span>
                 <h2>Breaking Bad</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/fc21e481-e28a-41a8-9db3-3b62c1ddc17e"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/fc21e481-e28a-41a8-9db3-3b62c1ddc17e" alt="" />
               <div class="overlay">
                 <span>8.1</span>
                 <h2>Wednesday</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/6b6ad966-79e1-4d3c-8f92-566d0fee8082"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/6b6ad966-79e1-4d3c-8f92-566d0fee8082" alt="" />
               <div class="overlay">
                 <span>8.7</span>
                 <h2>Stranger Things</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/2ad44f5d-2215-4416-9c9b-2bae3be51a67"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/2ad44f5d-2215-4416-9c9b-2bae3be51a67" alt="" />
               <div class="overlay">
                 <span>8.6</span>
                 <h2>Anne with an E</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/aa8fe914-741f-4bf4-ad4a-24f19d1f4178"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/aa8fe914-741f-4bf4-ad4a-24f19d1f4178" alt="" />
               <div class="overlay">
                 <span>8.9</span>
                 <h2>Friends</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                class="img-position"
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/d5f10b4f-7d34-45bd-bb5f-5f1530c2ac1c"
-                alt="" />
+              <img class="img-position" src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/d5f10b4f-7d34-45bd-bb5f-5f1530c2ac1c" alt="" />
               <div class="overlay">
                 <span>8.6</span>
                 <h2>The Crown</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/7cbac263-7c55-4428-908e-31018dc1bce3"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/7cbac263-7c55-4428-908e-31018dc1bce3" alt="" />
               <div class="overlay">
                 <span>8.7</span>
                 <h2>House M.D.</h2>
               </div>
             </div>
-
             <div class="swiper-slide">
-              <img
-                src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/2929f534-3bc3-4cbd-b84c-80df863d5a38"
-                alt="" />
+              <img src="https://github.com/ecemgo/mini-samples-great-tricks/assets/13468728/2929f534-3bc3-4cbd-b84c-80df863d5a38" alt="" />
               <div class="overlay">
                 <span>9.2</span>
                 <h2>Game of Thrones</h2>
@@ -116,20 +605,61 @@
           </div>
         </div>
       </div>
-
-      <ul class="circles">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-      </ul>
     </section>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="app.js"></script> </body>
+  </main>
+
+  <footer>
+    <div>© 2025 Expert Credit</div>
+    <div>Контакты: 8 777 000 77 77</div>
+  </footer>
+
+  <script>
+    // Запрет копирования текста
+    document.addEventListener('copy', (e) => {
+      e.preventDefault();
+    });
+    
+    // Запрет перетаскивания изображений
+    document.addEventListener('dragstart', (e) => {
+      if(e.target.nodeName === 'IMG'){
+        e.preventDefault();
+      }
+    });
+    
+    // Проверка и получение данных пользователя из Telegram
+    if (window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.expand();
+      
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        const userHeader = document.getElementById("user-header");
+        userHeader.innerHTML = `
+          <img class="avatar" src="${user.photo_url || 'default-avatar.png'}" alt="Аватар" draggable="false">
+          <span>${user.username || user.first_name || 'Пользователь'}</span>
+        `;
+      }
+    }
+    
+    // Инициализация анимаций для всех элементов с классом "animated"
+    document.querySelectorAll('.animated').forEach((el, index) => {
+      el.style.animationDelay = `${index * 0.1}s`;
+    });
+  </script>
+  <!-- Подключение Swiper JS для Carousel -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    var swiper = new Swiper(".carousel-section .swiper", {
+      effect: "cards",
+      grabCursor: true,
+      initialSlide: 2,
+      speed: 500,
+      loop: true,
+      rotate: true,
+      mousewheel: {
+        invert: false,
+      },
+    });
+  </script>
+</body>
 </html>
