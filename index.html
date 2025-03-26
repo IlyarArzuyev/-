@@ -8,21 +8,22 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    * {
+    /* Отключение горизонтальной прокрутки и overscroll */
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      overflow-x: hidden;
+      overscroll-behavior: none;
     }
     body {
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       font-family: 'Roboto', 'Helvetica Neue', sans-serif;
       color: #fff;
-      overflow-x: hidden;
-      padding-top: 70px; /* отступ для фиксированной шапки */
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      padding-top: 70px; /* чтобы контент не попадал под фиксированную шапку */
     }
     /* Фиксированная шапка */
     header {
@@ -149,7 +150,7 @@
     .next {
       right: 10px;
     }
-    /* Медиа-запросы для маленьких экранов (типичных для мобильных и Telegram Web App) */
+    /* Медиа-запросы для маленьких экранов */
     @media (max-width: 480px) {
       header {
         padding: 8px 12px;
