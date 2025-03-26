@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>3D Карусель карточек</title>
   <!-- Подключение шрифта Roboto и Material Icons -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
@@ -18,40 +18,43 @@
       font-family: 'Roboto', 'Helvetica Neue', sans-serif;
       color: #fff;
       overflow-x: hidden;
-      padding-top: 70px; /* отступ сверху, чтобы контент не заходил под фиксированную шапку */
+      padding-top: 70px; /* отступ для фиксированной шапки */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
-    /* Фиксированная шапка с градиентным фоном и тенью */
+    /* Фиксированная шапка */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      padding: 16px 24px;
+      padding: 12px 16px;
       background: linear-gradient(90deg, #7e57c2, #673ab7);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
       z-index: 300;
     }
-    /* Кнопка "Назад" со стилем Material и эффектом ripple */
     .back-button {
       position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
       color: #ffffff;
       background-color: transparent;
       border: none;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      padding: 8px 16px;
+      padding: 8px 12px;
       border-radius: 4px;
       overflow: hidden;
       outline: none;
     }
     .back-button .material-icons {
-      font-size: 20px;
+      font-size: 18px;
     }
     .back-button:active::after {
       content: "";
@@ -60,19 +63,18 @@
       height: 100%;
       top: 0;
       left: 0;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255,255,255,0.3);
       border-radius: inherit;
     }
-    .back-button:focus {
-      outline: none;
-    }
+    /* Контейнер карусели */
     .carousel-container {
       position: relative;
       width: 100%;
       max-width: 1000px;
-      height: 550px;
+      height: 55vh; /* относительно высоты экрана */
+      min-height: 300px;
       perspective: 1500px;
-      margin: 20px auto 0;
+      margin: 20px auto;
     }
     .carousel {
       position: relative;
@@ -86,19 +88,21 @@
     .slider {
       position: relative;
       width: 100%;
-      height: 400px;
+      height: 70%;
       transform-style: preserve-3d;
     }
     .slide {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 280px;
-      height: 400px;
+      width: 40vw;
+      max-width: 280px;
+      height: 50vh;
+      max-height: 400px;
       background-position: center;
       background-size: cover;
       border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
       transform: translate(-50%, -50%);
       transition: transform 0.6s ease, opacity 0.6s ease, filter 0.6s ease;
       opacity: 0;
@@ -106,17 +110,17 @@
     }
     .description-block {
       position: absolute;
-      top: calc(100% + 20px);
+      top: calc(100% + 10px);
       left: 50%;
       transform: translateX(-50%);
-      width: 80%;
+      width: 90%;
       max-width: 500px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255,255,255,0.1);
       backdrop-filter: blur(10px);
       padding: 1rem;
       border-radius: 10px;
       text-align: center;
-      font-size: 1rem;
+      font-size: 0.9rem;
       line-height: 1.5;
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
@@ -125,10 +129,10 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.2);
       border: none;
-      padding: 0.8rem;
-      font-size: 2rem;
+      padding: 0.6rem;
+      font-size: 1.5rem;
       color: #fff;
       cursor: pointer;
       border-radius: 50%;
@@ -137,7 +141,7 @@
       z-index: 200;
     }
     .carousel-button:hover {
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255,255,255,0.4);
     }
     .prev {
       left: 10px;
@@ -145,17 +149,29 @@
     .next {
       right: 10px;
     }
-    @media (max-width: 768px) {
+    /* Медиа-запросы для маленьких экранов (типичных для мобильных и Telegram Web App) */
+    @media (max-width: 480px) {
+      header {
+        padding: 8px 12px;
+      }
+      .back-button {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
       .carousel-container {
-        height: 400px;
+        height: 60vh;
+      }
+      .slider {
+        height: 70%;
       }
       .slide {
-        width: 220px;
-        height: 320px;
+        width: 60vw;
+        max-width: none;
+        height: 40vh;
       }
       .carousel-button {
         padding: 0.5rem;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
       }
     }
   </style>
