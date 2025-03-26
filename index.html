@@ -1,632 +1,245 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Mobile ExpertCredit</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Карусель карточек</title>
+  <!-- Подключение шрифта Roboto и Material Icons -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #1A237E;
-      --accent-color: #4CAF50;
-      --background: linear-gradient(180deg, #F5F5F6 0%, #E8EAF6 100%);
-      --shadow: 0 8px 24px rgba(0,0,0,0.08);
-      --header-height: 80px;
-      --footer-height: 60px;
-    }
-    
-    /* Запрет выделения текста */
-    body {
-      font-family: 'Roboto', Arial, sans-serif;
-      margin: 0;
-      background: var(--background);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      user-select: none;
-    }
-    
-    /* Фиксированная шапка */
-    .header {
-      background: var(--primary-color);
-      color: white;
-      padding: 0px;
-      box-shadow: var(--shadow);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: var(--header-height);
-      z-index: 1000;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: -20px;
-      left: -10%;
-      width: 120%;
-      height: 40px;
-      background: white;
-      border-radius: 24px;
-      transform: rotate(-2deg);
-    }
-    
-    /* Фиксированный нижний бар (футер) */
-    footer {
-      background: var(--primary-color);
-      color: white;
-      text-align: center;
-      padding: -20px;
-      font-size: 14px;
-      height: var(--footer-height);
-      line-height: var(--footer-height);
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-    }
-    
-    /* Контейнер основного контента с прокруткой */
-    main {
-      margin-top: var(--header-height);
-      margin-bottom: var(--footer-height);
-      height: calc(100vh - var(--header-height) - var(--footer-height));
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    /* Карта с градиентом */
-    .account-card {
-      background: linear-gradient(135deg, var(--primary-color) 0%, #303F9F 100%);
-      border-radius: 24px;
-      padding: 24px;
-      margin: 24px 16px;
-      color: white;
-      box-shadow: var(--shadow);
-      transition: transform 0.3s ease;
-    }
-    
-    .account-card:hover {
-      transform: translateY(-4px);
-    }
-    
-    /* Стили для быстрых действий */
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      padding-right: 20px;
-      margin-top: 32px;
-      align: center;
-      padding-top: 6px;
-      padding-bottom: 8px;
-      padding-left: 20px;
-    }
-    
-    .action-button {
-      text-align: center;
-      padding: 16px;
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
-      border: 1px solid rgba(0,0,0,0.05);
-      width: 80px;
-      height: 80px;
-    }
-    
-    .action-button:hover {
-      background: white;
-      box-shadow: var(--shadow);
-    }
-    
-    /* Иконки кнопок 15x15 пикселей */
-    .action-icon {
-      font-size: 25px;
-      width: 25px;
-      height: 25px;
-      display: inline-block;
-      color: var(--primary-color);
-      margin-bottom: 8px;
-      transition: transform 0.3s ease;
-      line-height: 15px;
-    }
-
-    .action-button div {
-      font-size: 12px;
-    }
-
-    /* Секция офер-карт */
-    .offer-slider {
-      display: flex;
-      overflow-x: auto;
-      padding: 16px;
-      gap: 16px;
-      scroll-snap-type: x mandatory;
-    }
-    
-    .offer-card {
-      flex: 0 0 80%;
-      border-radius: 24px;
-      scroll-snap-align: start;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-      height: 200px;
-      width: 700px;
-      user-select: none; /* отключает выделение текста */
-    }
- 
-    a {
-      -webkit-tap-highlight-color: transparent; /* убирает подсветку на мобильных */
-      outline: none; /* убирает рамку при фокусе */
-      text-decoration: none; /* убирает подчеркивание */
-    }
-
-    /* Эффект при нажатии */
-    .offer-card:active {
-      transform: scale(0.97);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-    
-    /* Секция транзакций - кнопки */
-    .transactions {
-      margin: 24px 16px 5px 16px; /* снизу отступ ~5px */
-      background: var(--background);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    
-    .transactions-header {
-      background: var(--primary-color);
-      color: white;
-      padding: 16px;
-      font-size: 18px;
-      font-weight: 500;
-      align-items: center;
-      justify-content: center;
-      display: flex;
-      height: 20px;
-    }
-    
-    .transaction-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 50px; /* можно задать нужную высоту */
-      text-decoration: none;
-      color: inherit;
-      border-radius: 8px; /* скругление углов */
-    }
-    
-    .transaction-item:last-child {
-      border-bottom: none;
-    }
-    
-    /* Анимации */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .animated {
-      animation: fadeIn 0.6s ease forwards;
-    }
-    
-    /* Кастомный скроллбар */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,0.1);
-      border-radius: 4px;
-    }
-    
-    /* Стили для аватарки и блока с данными пользователя */
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-    
-    #user-header span {
-      font-size: 10px;
-      font-weight: 400;
-      vertical-align: middle;
-    }
-    .quick-actions a {
-      text-decoration: none;
-      display: inline-block;
-      color: inherit;
-    }
-
-    .quick-actions a:focus {
-      outline: none;
-    }
-    
-    .transactions-header img {
-      width: 25px;
-      height: 25px;
-    }
-    
-    /* Правка для мобильного вида на любых устройствах */
-    @media (min-width: 500px) {
-      html, body {
-        max-width: 700px;
-        max-height: 800px;
-        margin: auto;
-        overflow: hidden;
-      }
-    }
-  </style>
-  <!-- Подключение стилей Swiper -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-  <!-- Travel Carousel CSS -->
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap");
-
-    *,
-    *::before,
-    *::after {
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Comfortaa", cursive;
     }
-
-    /* Для раздела Travel Carousel используем свой класс, чтобы не конфликтовать с основными стилями */
-    section.carousel-section {
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      padding-top: 70px; /* отступ сверху, чтобы контент не заходил под фиксированную шапку */
+    }
+    /* Фиксированная шапка с градиентным фоном и тенью */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px 24px;
+      background: linear-gradient(90deg, #7e57c2, #673ab7);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      z-index: 300;
+    }
+    /* Кнопка "Назад" со стилем Material и эффектом ripple */
+    .back-button {
       position: relative;
-      display: flex;
-      justify-content: center;
+      display: inline-flex;
       align-items: center;
-      /* Фон удалён */
-      min-height: 100vh;
+      gap: 8px;
+      color: #ffffff;
+      background-color: transparent;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 4px;
       overflow: hidden;
-      margin-bottom: -605px; /* отступ снизу ~5px */
-      margin-top: -100px; /* отступ снизу ~5px */
+      outline: none;
     }
-
-    .carousel-section .content {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.28) 0%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      backdrop-filter: blur(30px);
-      border-radius: 20px;
-      width: min(900px, 100%);
-      box-shadow: 0 0.5px 0 1px rgba(255, 255, 255, 0.23) inset,
-        0 1px 0 0 rgba(255, 255, 255, 0.66) inset, 0 4px 16px rgba(0, 0, 0, 0.12);
-      z-index: 10;
+    .back-button .material-icons {
+      font-size: 20px;
     }
-
-    .carousel-section .info {
+    .back-button:active::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: inherit;
+    }
+    .back-button:focus {
+      outline: none;
+    }
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      height: 550px;
+      perspective: 1500px;
+      margin: 20px auto 0;
+    }
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      max-width: 450px;
-      padding: 0 35px;
-      text-align: justify;
+      justify-content: center;
     }
-
-    .carousel-section .info p {
-      color: #fff;
-      font-weight: 500;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    .carousel-section .movie-night {
-      background: linear-gradient(225deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%);
-    }
-
-    .carousel-section .btn {
-      display: block;
-      padding: 10px 40px;
-      margin: 10px auto;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border-radius: 4px;
-      outline: none;
-      text-decoration: none;
-      color: #784ba0;
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-    }
-
-    .carousel-section .btn:hover {
-      animation: gelatine 0.5s 1;
-    }
-
-    @keyframes gelatine {
-      0%,
-      100% {
-        transform: scale(1, 1);
-      }
-      25% {
-        transform: scale(0.9, 1.1);
-      }
-      50% {
-        transform: scale(1.1, 0.9);
-      }
-      75% {
-        transform: scale(0.95, 1.05);
-      }
-    }
-
-    /* SWIPER */
-
-    .carousel-section .swiper {
-      width: 250px;
-      height: 450px;
-      padding: 50px 0;
-    }
-
-    .carousel-section .swiper-slide {
+    .slider {
       position: relative;
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-      user-select: none;
-    }
-
-    .carousel-section .swiper-slide img {
-      position: absolute;
-      inset: 0;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: 400px;
+      transform-style: preserve-3d;
     }
-
-    .carousel-section .img-position {
-      object-position: 50% 0%;
-    }
-
-    .carousel-section .overlay {
+    .slide {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to top, #0f2027, transparent, transparent);
-      background-repeat: no-repeat;
+      top: 50%;
+      left: 50%;
+      width: 280px;
+      height: 400px;
+      background-position: center;
       background-size: cover;
-    }
-
-    .carousel-section .overlay span {
-      position: absolute;
-      top: 0;
-      right: 0;
-      color: #fff;
-      padding: 7px 18px;
-      margin: 10px;
       border-radius: 20px;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      font-family: inherit;
-      background: rgba(255, 255, 255, 0.095);
-      box-shadow: inset 2px -2px 20px rgba(214, 214, 214, 0.2),
-        inset -3px 3px 3px rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(74px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      transform: translate(-50%, -50%);
+      transition: transform 0.6s ease, opacity 0.6s ease, filter 0.6s ease;
+      opacity: 0;
+      filter: blur(5px);
     }
-
-    .carousel-section .overlay h2 {
+    .description-block {
       position: absolute;
-      bottom: 0;
-      left: 0;
+      top: calc(100% + 20px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1.5;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 0.8rem;
+      font-size: 2rem;
       color: #fff;
-      font-weight: 400;
-      font-size: 1.1rem;
-      line-height: 1.4;
-      margin: 0 0 20px 20px;
+      cursor: pointer;
+      border-radius: 50%;
+      backdrop-filter: blur(5px);
+      transition: background 0.3s;
+      z-index: 200;
+    }
+    .carousel-button:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .prev {
+      left: 10px;
+    }
+    .next {
+      right: 10px;
+    }
+    @media (max-width: 768px) {
+      .carousel-container {
+        height: 400px;
+      }
+      .slide {
+        width: 220px;
+        height: 320px;
+      }
+      .carousel-button {
+        padding: 0.5rem;
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="header" aria-label="Панель пользователя">
-    <div id="user-header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Добро пожаловать!</div>
+  <header>
+    <button class="back-button" onclick="location.href='#'">
+      <span class="material-icons">arrow_back</span>
+      Назад
+    </button>
   </header>
-
-  <main>
-    <section class="account-card animated" style="animation-delay: 0.2s;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-size: 12px; opacity: 0.8;">Ипотечная компания</div>
-          <div style="font-size: 32px; font-weight: 700; margin: 8px 0;">Expert Credit</div>
-          <div style="font-size: 14px;">на рынке с 2022г.</div>
-        </div>
-        <div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 12px;">
-          <span class="material-icons" aria-label="Карта">real_estate_agent</span>
-        </div>
+  <div class="carousel-container">
+    <div class="carousel">
+      <button class="carousel-button prev">&#10094;</button>
+      <div class="slider">
+        <div class="slide" style="background-image: url('KanaB.jpg');"></div>
+        <div class="slide" style="background-image: url('KanaI.jpg');"></div>
+        <div class="slide" style="background-image: url('Salta.jpg');"></div>
+        <div class="slide" style="background-image: url('Dinara.jpg');"></div>
+        <div class="slide" style="background-image: url('Di.jpg');"></div>
+        <div class="slide" style="background-image: url('Ilyar.jpg');"></div>
       </div>
-    </section>
-
-    <section class="quick-actions">
-      <a href="deepseakCalc.html" rel="noopener noreferrer">
-        <div class="action-button animated" style="animation-delay: 0.4s;" tabindex="0" aria-label="Переводы">
-          <span class="material-icons action-icon">auto_stories</span>
-          <div>Гайд</div>
-        </div>
-      </a>
-      <a href="https://pay.kaspi.kz/pay/klcx3wrc" target="_blank" rel="noopener noreferrer">
-        <div class="action-button animated" style="animation-delay: 0.5s;" tabindex="0" aria-label="Платежи">
-          <span class="material-icons action-icon">payments</span>
-          <div>Оплата</div>
-        </div>
-      </a>
-      <a href="https://2gis.kz/almaty/inside/9430047375024031/firm/70000001065238061/tab/reviews?m=76.902419%2C43.237714%2F16" target="_blank" rel="noopener noreferrer">
-        <div class="action-button animated" style="animation-delay: 0.6s;" tabindex="0" aria-label="QR-код">
-          <span class="material-icons action-icon">rate_review</span>
-          <div>Отзыв</div>
-        </div>
-      </a>
-      <a href="https://t.me/managers_assessmentBOT" rel="noopener noreferrer">
-        <div class="action-button animated" style="animation-delay: 0.7s;" tabindex="0" aria-label="Вклады">
-          <span class="material-icons action-icon">thumbs_up_down</span>
-          <div>Оценить</div>
-        </div>
-      </a>
-    </section>
-
-    <section class="offer-slider" style="margin-left: 16px;">
-      <div class="offer-card animated" style="animation-delay: 0.8s; background-image: url('IMG_8973.jpeg'); width: 200px; height: 200px; background-size: cover; background-position: center;"></div>
-      <a href="calc.html">
-        <div class="offer-card animated" style="animation-delay: 0.9s; background-image: url('calc.png'); width: 285px; height: 200px; background-size: cover; background-position: center;"></div>
-      </a>
-      <a href="https://2gis.kz/almaty/firm/70000001065238061?m=76.902439%2C43.23761%2F16" target="_blank">
-        <div class="offer-card animated" style="animation-delay: 0.9s; background-image: url('2Gis.png'); width: 285px; height: 200px; background-size: cover; background-position: center;"></div>
-      </a>
-      <a href="openAI.html">
-        <div class="offer-card animated" style="animation-delay: 0.9s; background-image: url('AI1.png'); width: 285px; height: 200px; background-size: cover; background-position: center;"></div>
-      </a>
-    </section>
-
-    <section class="transactions animated" style="animation-delay: 1s;">
-      <div class="transactions-header">
-        Мы в соц. сетях:&nbsp;&nbsp;&nbsp; 
-        <a href="https://www.instagram.com/kanat_expert/" target="_blank" class="transaction-item">
-          &nbsp;&nbsp;
-          <img src="ini.png" alt="Instagram">&nbsp;&nbsp;&nbsp;&nbsp;     
-        </a>
-        <a href="https://www.youtube.com/@kanat_expert" target="_blank" class="transaction-item">
-          &nbsp;&nbsp;
-          <img src="yu.png" alt="YouTube">&nbsp;&nbsp;&nbsp;&nbsp; 
-        </a>
-        <a href="https://wa.me/77753181260" target="_blank" class="transaction-item">
-          &nbsp;&nbsp;        
-          <img src="ww.png" alt="What's app">
-        </a>
-      </div>
-    </section>
-
-    <!-- Добавленный раздел Travel Carousel (интегрированные HTML, CSS, JS коды) -->
-    <section class="carousel-section">
-      <div class="content">
-        <div class="info">
-			<br><br>
-Специалисты "Expert Credit"
-        <div class="swiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img src="KanaB.jpg" alt="" />
-              <div class="overlay">
-                <h2>Канат Дарибекович</h2>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <img class="img-position" src="KanaI.jpg" alt="" />
-              <div class="overlay">
-                <h2>Канат Имангалиулы</h2>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <img src="Salta.jpg" alt="" />
-              <div class="overlay">
-                <h2>Салтанат Нурбековна</h2>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <img src="Dinara.jpg" alt="" />
-              <div class="overlay">
-                <h2>Динара</h2>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <img src="Di.jpg" alt="" />
-              <div class="overlay">
-                <h2>Диана</h2>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <img src="Ilyar.jpg" alt="" />
-              <div class="overlay">
-                <h2>Ильяр Даниярович</h2>
-              </div>
-            </div>
-          
-          
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div>© 2025 Expert Credit</div>
-    <div>Контакты: 8 777 000 77 77</div>
-  </footer>
+      <button class="carousel-button next">&#10095;</button>
+    </div>
+    <div class="description-block" id="description">
+      Здесь будет описание карточки
+    </div>
+  </div>
 
   <script>
-    // Запрет копирования текста
-    document.addEventListener('copy', (e) => {
-      e.preventDefault();
-    });
-    
-    // Запрет перетаскивания изображений
-    document.addEventListener('dragstart', (e) => {
-      if(e.target.nodeName === 'IMG'){
-        e.preventDefault();
-      }
-    });
-    
-    // Проверка и получение данных пользователя из Telegram
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      tg.expand();
-      
-      const user = tg.initDataUnsafe?.user;
-      if (user) {
-        const userHeader = document.getElementById("user-header");
-        userHeader.innerHTML = `
-          <img class="avatar" src="${user.photo_url || 'default-avatar.png'}" alt="Аватар" draggable="false">
-          <span>${user.username || user.first_name || 'Пользователь'}</span>
-        `;
-      }
+    const slider = document.querySelector('.slider');
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const prevButton = document.querySelector('.prev');
+    const nextButton = document.querySelector('.next');
+    const descriptionBlock = document.getElementById('description');
+
+    let currentIndex = 0;
+    const depth = 200;
+
+    const descriptions = [
+      "Канат Дарибекович - Опытный лидер и эксперт в сфере ипотечного кредитования. Обладает глубокими знаниями рынка недвижимости и финансов, разрабатывает стратегии развития компании, нацеленные на максимальный комфорт клиентов и партнеров. Всегда в поиске новых возможностей для улучшения сервиса и условий для заемщиков.",
+      "Канат Имангалиулы - Надежный стратег и правая рука руководителя. Координирует ключевые процессы компании, контролирует выполнение задач и обеспечивает бесперебойную работу всех отделов. Благодаря профессионализму и вниманию к деталям, помогает компании достигать новых высот.",
+      "Салтанат Нурбековна - Настоящий двигатель команды! Отвечает за продажи, обучает менеджеров, внедряет эффективные техники переговоров и контролирует выполнение планов. Ее цель – максимальная продуктивность и высокий уровень клиентского сервиса.",
+      "Динара - Эксперт по недвижимости, который всегда подберет лучший вариант для клиента. Ориентируется на рынке, знает все нюансы сделок и помогает клиентам сделать выгодный выбор. Работает быстро, надежно и с полной отдачей.",
+      "Диана - Создает и продвигает имидж компании в соцсетях. Управляет контентом, разрабатывает рекламные стратегии и повышает узнаваемость бренда. Делает так, чтобы о компании говорили, доверяли и приходили за ипотекой именно к нам!",
+      "Ильяр - Отвечает за все технические процессы в компании. Разрабатывает, оптимизирует и поддерживает работу IT-инфраструктуры, обеспечивает безопасность данных и автоматизирует процессы. Благодаря ему всё работает без сбоев!"
+    ];
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        let offset = index - currentIndex;
+        let zIndex = -Math.abs(offset) + slides.length;
+        let scale = 1 - Math.abs(offset) * 0.1;
+        let translateX = offset * 220;
+        let translateZ = -Math.abs(offset) * depth;
+        let rotateY = offset * 20;
+
+        if (Math.abs(offset) > 2) {
+          slide.style.opacity = 0;
+          slide.style.filter = 'blur(10px)';
+        } else {
+          slide.style.opacity = 1;
+          slide.style.filter = `blur(${Math.abs(offset) * 3}px)`;
+        }
+
+        slide.style.zIndex = zIndex;
+        slide.style.transform = `translate(-50%, -50%) translateX(${translateX}px) scale(${scale}) rotateY(${rotateY}deg) translateZ(${translateZ}px)`;
+      });
+
+      descriptionBlock.textContent = descriptions[currentIndex];
+      descriptionBlock.style.opacity = 1;
     }
-    
-    // Инициализация анимаций для всех элементов с классом "animated"
-    document.querySelectorAll('.animated').forEach((el, index) => {
-      el.style.animationDelay = `${index * 0.1}s`;
+
+    prevButton.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      updateSlides();
     });
-  </script>
-  <!-- Подключение Swiper JS для Carousel -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    var swiper = new Swiper(".carousel-section .swiper", {
-      effect: "cards",
-      grabCursor: true,
-      initialSlide: 2,
-      speed: 500,
-      loop: true,
-      rotate: true,
-      mousewheel: {
-        invert: false,
-      },
+
+    nextButton.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateSlides();
     });
+
+    updateSlides();
   </script>
 </body>
 </html>
